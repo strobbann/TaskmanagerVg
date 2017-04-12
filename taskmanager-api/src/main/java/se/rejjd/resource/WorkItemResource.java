@@ -44,6 +44,7 @@ public final class WorkItemResource {
 
 	@POST
 	public Response addWorkItem(WorkItem workItem) throws ServiceException {
+//commented away until solution for client
 //		WorkItem workitemFromDb = workItemService.getWorkItemById(workItem.getId());
 //		if (workitemFromDb != null) {
 //			return Response.status(Status.FOUND).build();
