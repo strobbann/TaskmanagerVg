@@ -44,10 +44,10 @@ public final class WorkItemResource {
 
 	@POST
 	public Response addWorkItem(WorkItem workItem) throws ServiceException {
-		WorkItem workitemFromDb = workItemService.getWorkItemById(workItem.getId());
-		if (workitemFromDb != null) {
-			return Response.status(Status.FOUND).build();
-		}
+//		WorkItem workitemFromDb = workItemService.getWorkItemById(workItem.getId());
+//		if (workitemFromDb != null) {
+//			return Response.status(Status.FOUND).build();
+//		}
 		workItem = new WorkItem(workItem.getTitle(), workItem.getDescription());
 		workItemService.addOrUpdateWorkItem(workItem);
 		URI location = uriInfo.getAbsolutePathBuilder().path(workItem.getId().toString()).build();
