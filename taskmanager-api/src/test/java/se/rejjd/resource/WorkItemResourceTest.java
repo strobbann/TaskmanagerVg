@@ -2,6 +2,7 @@ package se.rejjd.resource;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
@@ -135,7 +136,7 @@ public class WorkItemResourceTest {
 				.request()
 				.header(key, value)
 				.get(new GenericType<Collection<WorkItem>>(){});
-		assertThat(workitems, hasItem(workitemfromDb));
+		assertThat(workitems, hasItems(workitemfromDb));
 		
 	}
 

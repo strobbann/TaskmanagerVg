@@ -61,12 +61,12 @@ public final class WorkItemResource {
 		WorkItem workItem = workItemService.getWorkItemById(id);
 		Issue issue;
 		if (workItem == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			throw new ResourceException("Workitem Doesnt Exist", Status.BAD_REQUEST);
 		}
 		try {
 			issue = issueService.addIssue(workItem, issueDescription);
 		} catch (ServiceException e) {
-			return Response.status(Status.EXPECTATION_FAILED).entity(e.getMessage()).build();
+			throw new ResourceException(e.getMessage(), Status.PRECONDITION_FAILED);
 		}
 		URI location = uriInfo.getAbsolutePathBuilder().path(issue.getId().toString()).build();
 		return Response.created(location).build();
@@ -77,7 +77,7 @@ public final class WorkItemResource {
 	public Response getWorkItem(@PathParam("id") Long id) {
 		WorkItem workitem = workItemService.getWorkItemById(id);
 		if (workitem == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			throw new ResourceException("Workitem Doesnt Exist", Status.BAD_REQUEST);
 		}
 		return Response.ok(workitem).build();
 	}
@@ -88,13 +88,13 @@ public final class WorkItemResource {
 		if (param.getStatus() != null) {
 			workitems = workItemService.getWorkItemsByStatus(param.getStatus());
 			if (workitems.isEmpty()) {
-				return Response.noContent().build();
+				throw new ResourceException("No workitems with status", Status.NO_CONTENT);
 			}
 			return Response.ok(workitems).build();
 		} else {
 			workitems = workItemService.getWorkItemByDescripton(param.getDescription());
 			if (workitems.isEmpty()) {
-				return Response.noContent().build();
+				throw new ResourceException("No workitems with description", Status.NO_CONTENT);
 			}
 			return Response.ok(workitems).build();
 		}
@@ -114,13 +114,13 @@ public final class WorkItemResource {
 	@Path("{id}")
 	public Response updateWorkItem(@PathParam("id") Long id, WorkItem workItem) throws ServiceException {
 		if (workItem.getId() != id) {
-			return Response.status(Status.BAD_REQUEST).entity("conflicting id's").build();
+			throw new ResourceException("conflicting ids",Status.BAD_REQUEST);
 		}
 		try {
 			WorkItem workitemFromDb = workItemService.getWorkItemById(workItem.getId());
 			workItemService.updateWorkItemStatus(workitemFromDb, workItem.getStatus());
 		} catch (ServiceException e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			throw new ResourceException(e.getMessage(), Status.BAD_REQUEST);
 		}
 
 		return Response.ok().build();
@@ -132,12 +132,12 @@ public final class WorkItemResource {
 		WorkItem workItem = workItemService.getWorkItemById(id);
 		Issue issueFromDb = issueService.findIssueById(issue.getId());
 		if (workItem == null || issueFromDb == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			throw new ResourceException("workitem or issue doesnt exist", Status.NO_CONTENT);
 		}
 		try {
 			issueService.updateIssue(issue);
 		} catch (ServiceException e) {
-			return Response.status(Status.NOT_FOUND).build();
+			throw new ResourceException(e.getMessage(),Status.BAD_REQUEST);
 		}
 		return Response.ok().build();
 	}

@@ -43,9 +43,10 @@ public final class UserResource {
 
 	@POST
 	public Response addUser(User user) throws ServiceException {
+//		int userId = Integer.parseInt(user.getUserId());
 		User fromDb = userService.getUserByUserId(user.getUserId());
 		if (fromDb != null) {
-			return Response.status(Status.FOUND).build();
+			throw new ResourceException("user already exist with userid", Status.FOUND);
 		}
 		user = new User(user.getUsername(), user.getFirstname(), user.getLastname(), user.getUserId());
 		userService.addOrUpdateUser(user);
@@ -59,7 +60,7 @@ public final class UserResource {
 		User user = userService.getUserByUserId(id);
 
 		if (user == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			throw new ResourceException("no user with id",Status.NO_CONTENT);
 		}
 		return Response.ok(user).build();
 
@@ -69,7 +70,7 @@ public final class UserResource {
 	public Response getUserByName(@BeanParam UserQueryNameParam param) {
 		Collection<User> users = userService.getUsers(param.getFirstname(), param.getLastname(), param.getUsername());
 		if (users.isEmpty()) {
-			return Response.noContent().build();
+			throw new ResourceException("no user with name",Status.NO_CONTENT);
 		}
 		return Response.ok(users).build();
 	}
@@ -80,7 +81,7 @@ public final class UserResource {
 		User user = userService.getUserByUserId(userId);
 		Collection<WorkItem> workItems = workItemService.getAllWorkItemsByUser(user);
 		if (workItems.isEmpty()) {
-			return Response.noContent().build();
+			throw new ResourceException("user has no workitems",Status.NO_CONTENT);
 		}
 		return Response.ok(workItems).build();
 	}
@@ -89,11 +90,11 @@ public final class UserResource {
 	@Path("{userId}")
 	public Response updateUser(@PathParam("userId") String userId, User user) throws ServiceException {
 		if (!userId.equals(user.getUserId())) {
-			return Response.status(Status.BAD_REQUEST).build();
+			throw new ResourceException("not the same userid as in db",Status.BAD_REQUEST);
 		}
 		User userfromDb = userService.getUserByUserId(userId);
 		if (userfromDb == null) {
-			return Response.status(Status.NOT_FOUND).build();
+			throw new ResourceException("no user with id",Status.NO_CONTENT);
 		}
 		userService.addOrUpdateUser(user);
 		return Response.ok().build();

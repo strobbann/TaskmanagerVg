@@ -13,6 +13,11 @@ public final class TeamUserContainer {
 	private Team team;
 	@XmlElement
 	private User user;
+	
+	public TeamUserContainer(Team team , User user){
+		this.user = user;
+		this.team = team;
+	}
 
 	public Team getTeam() {
 		return team;
